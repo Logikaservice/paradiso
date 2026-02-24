@@ -22,6 +22,20 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true });
 });
 
+// In produzione serve anche il frontend (stessa porta = niente CORS, /api funziona)
+const frontendDist = path.join(__dirname, '..', 'frontend', 'dist');
+const fs = require('fs');
+if (fs.existsSync(frontendDist)) {
+  app.use(express.static(frontendDist));
+  app.get('*', (req, res) => {
+    if (!req.path.startsWith('/api')) {
+      res.sendFile(path.join(frontendDist, 'index.html'));
+    } else {
+      res.status(404).json({ error: 'Not found' });
+    }
+  });
+}
+
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).json({ error: 'Errore interno' });
