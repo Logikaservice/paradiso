@@ -1,4 +1,5 @@
-const API_BASE = '/api';
+// In sviluppo Vite fa proxy su /api; in produzione usa VITE_API_URL (es. http://IP:3001)
+const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 function getToken() {
   return localStorage.getItem('paradiso_token');

@@ -117,6 +117,8 @@ Se il path sulla VPS è diverso da `~/paradiso`, imposta il secret **VPS_PATH** 
 
 ## Server da zero (prima volta)
 
+**Guida passo-passo completa:** [docs/SERVER_DA_ZERO.md](docs/SERVER_DA_ZERO.md) (reinstallazione + setup con sola chiave `id_rsa`).
+
 Se la VPS è vuota, ordine consigliato:
 
 | Step | Dove   | Cosa fare |

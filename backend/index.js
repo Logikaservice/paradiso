@@ -6,6 +6,7 @@ const { pool } = require('./utils/db');
 const authRoutes = require('./routes/auth');
 const usersRoutes = require('./routes/users');
 const projectsRoutes = require('./routes/projects');
+const orariRoutes = require('./routes/orari')(pool);
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -21,6 +22,8 @@ app.use('/api/projects', projectsRoutes(pool));
 app.get('/api/health', (req, res) => {
   res.json({ ok: true });
 });
+
+app.use('/api/orari', orariRoutes);
 
 // In produzione serve anche il frontend (stessa porta = niente CORS, /api funziona)
 const frontendDist = path.join(__dirname, '..', 'frontend', 'dist');
