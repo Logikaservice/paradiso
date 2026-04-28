@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Users } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { getAuthHeader } from '../api';
 import TimesheetManager from '../components/TimesheetManager';
@@ -8,6 +8,7 @@ import TimesheetManager from '../components/TimesheetManager';
 export default function OrariTurni() {
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
+  const canManageUsers = currentUser?.ruolo === 'admin' || currentUser?.ruolo === 'tecnico';
   const [notification, setNotification] = useState({ message: '', type: 'info', visible: false });
   const notifTimeoutRef = React.useRef(null);
 
@@ -44,7 +45,7 @@ export default function OrariTurni() {
         </div>
       )}
 
-      <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center gap-4">
+      <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between gap-4">
         <button
           type="button"
           onClick={() => navigate('/')}
@@ -53,7 +54,19 @@ export default function OrariTurni() {
           <ArrowLeft size={20} />
           Torna alla Dashboard
         </button>
-        <h1 className="text-xl font-semibold text-slate-800">Orari e Turni</h1>
+        <div className="flex items-center gap-4">
+          <h1 className="text-xl font-semibold text-slate-800">Orari e Turni</h1>
+          {canManageUsers && (
+            <button
+              type="button"
+              onClick={() => navigate('/utenti')}
+              className="flex items-center gap-2 px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100 rounded-lg"
+            >
+              <Users size={18} />
+              Utenti
+            </button>
+          )}
+        </div>
       </header>
       <main className="min-h-[calc(100vh-120px)]">
         <TimesheetManager
