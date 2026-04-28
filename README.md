@@ -2,6 +2,8 @@
 
 Stack: **Node (Express)** + **React (Vite)** + **PostgreSQL**. Deploy: **GitHub** → push su **main** → deploy automatico sulla **VPS**.
 
+> Nota ambiente principale (attuale): il riferimento operativo del progetto Orari/Paradiso e `http://46.224.55.248:3001/`.
+
 ---
 
 ## In locale: solo copia del progetto
