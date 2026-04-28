@@ -3,6 +3,7 @@ require('dotenv').config({ path: path.join(__dirname, '.env') });
 const express = require('express');
 const cors = require('cors');
 const { pool } = require('./utils/db');
+const { ensureUsersSchema } = require('./utils/schema');
 const authRoutes = require('./routes/auth');
 const usersRoutes = require('./routes/users');
 const projectsRoutes = require('./routes/projects');
@@ -47,6 +48,7 @@ app.use((err, req, res, next) => {
 async function start() {
   try {
     await pool.query('SELECT 1');
+    await ensureUsersSchema(pool);
     console.log('Database connesso');
   } catch (e) {
     console.error('Database non raggiungibile:', e.message);

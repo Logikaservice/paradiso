@@ -24,6 +24,7 @@ export default function GestioneUtenti() {
     ruolo: 'cliente',
     nome: '',
     cognome: '',
+    is_active: true,
     enabled_projects: ['dashboard'],
   });
 
@@ -55,6 +56,7 @@ export default function GestioneUtenti() {
       ruolo: 'cliente',
       nome: '',
       cognome: '',
+      is_active: true,
       enabled_projects: ['dashboard'],
     });
     setModal('create');
@@ -69,6 +71,7 @@ export default function GestioneUtenti() {
       ruolo: u.ruolo,
       nome: u.nome,
       cognome: u.cognome,
+      is_active: u.is_active !== false,
       enabled_projects: u.enabled_projects || ['dashboard'],
     });
     setModal('edit');
@@ -94,6 +97,7 @@ export default function GestioneUtenti() {
           ruolo: form.ruolo,
           nome: form.nome,
           cognome: form.cognome,
+          is_active: form.is_active,
           enabled_projects: form.enabled_projects,
         });
       } else {
@@ -103,6 +107,7 @@ export default function GestioneUtenti() {
           ruolo: form.ruolo,
           nome: form.nome,
           cognome: form.cognome,
+          is_active: form.is_active,
           enabled_projects: form.enabled_projects,
         });
       }
@@ -168,6 +173,7 @@ export default function GestioneUtenti() {
                   <th className="text-left py-3 px-4 text-sm font-medium text-slate-600">
                     Progetti
                   </th>
+                  <th className="text-left py-3 px-4 text-sm font-medium text-slate-600">Stato</th>
                   <th className="w-24 py-3 px-4" />
                 </tr>
               </thead>
@@ -193,6 +199,17 @@ export default function GestioneUtenti() {
                     </td>
                     <td className="py-3 px-4 text-sm text-slate-600">
                       {(u.enabled_projects || ['dashboard']).join(', ')}
+                    </td>
+                    <td className="py-3 px-4">
+                      <span
+                        className={`px-2 py-0.5 rounded text-xs ${
+                          u.is_active === false
+                            ? 'bg-red-100 text-red-700'
+                            : 'bg-emerald-100 text-emerald-700'
+                        }`}
+                      >
+                        {u.is_active === false ? 'Disattivo' : 'Attivo'}
+                      </span>
                     </td>
                     <td className="py-3 px-4">
                       <div className="flex gap-2">
@@ -320,6 +337,17 @@ export default function GestioneUtenti() {
                     );
                   })}
                 </div>
+              </div>
+              <div>
+                <label className="inline-flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.is_active !== false}
+                    onChange={(e) => setForm((f) => ({ ...f, is_active: e.target.checked }))}
+                    className="rounded border-slate-300 text-indigo-600"
+                  />
+                  <span className="text-sm text-slate-700">Utente attivo (puo effettuare login)</span>
+                </label>
               </div>
               <div className="flex gap-3 pt-4">
                 <button

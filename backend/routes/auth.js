@@ -13,6 +13,7 @@ router.post('/login', async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT id, email, password, ruolo, nome, cognome,
+              is_active,
               COALESCE(enabled_projects, '["dashboard"]'::jsonb) AS enabled_projects
        FROM users WHERE email = $1`,
       [email.trim().toLowerCase()]
@@ -21,6 +22,9 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Credenziali non valide' });
     }
     const user = result.rows[0];
+    if (user.is_active === false) {
+      return res.status(403).json({ error: 'Utente disattivato. Contatta un amministratore.' });
+    }
     const ok = await comparePassword(password, user.password);
     if (!ok) {
       return res.status(401).json({ error: 'Credenziali non valide' });
@@ -47,6 +51,7 @@ router.post('/refresh', async (req, res) => {
     const decoded = verifyRefreshToken(refreshToken);
     const result = await pool.query(
       `SELECT id, email, ruolo, nome, cognome,
+              is_active,
               COALESCE(enabled_projects, '["dashboard"]'::jsonb) AS enabled_projects
        FROM users WHERE id = $1`,
       [decoded.id]
@@ -55,6 +60,9 @@ router.post('/refresh', async (req, res) => {
       return res.status(401).json({ error: 'Utente non trovato' });
     }
     const user = result.rows[0];
+    if (user.is_active === false) {
+      return res.status(403).json({ error: 'Utente disattivato. Effettua nuovamente il login.' });
+    }
     const enabled = user.enabled_projects;
     user.enabled_projects = Array.isArray(enabled) ? enabled : (enabled ? JSON.parse(enabled) : ['dashboard']);
     res.json(generateLoginResponse(user));

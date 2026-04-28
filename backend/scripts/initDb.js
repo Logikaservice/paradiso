@@ -18,12 +18,14 @@ async function run() {
         ruolo VARCHAR(50) NOT NULL DEFAULT 'cliente',
         nome VARCHAR(255) NOT NULL,
         cognome VARCHAR(255) NOT NULL,
+        is_active BOOLEAN NOT NULL DEFAULT TRUE,
         enabled_projects JSONB DEFAULT '["dashboard"]'::jsonb,
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
       );
     `);
     console.log('Tabella users ok');
+    await client.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT TRUE`);
 
     await client.query(`
       CREATE TABLE IF NOT EXISTS projects (
