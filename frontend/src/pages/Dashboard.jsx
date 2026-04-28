@@ -38,18 +38,46 @@ function ProjectCard({ project, onClick }) {
 }
 
 export default function Dashboard() {
-  const { user, logout } = useAuth();
+  const { user, logout, refresh } = useAuth();
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    fetchProjects()
-      .then(setProjects)
-      .catch((e) => setError(e.message))
-      .finally(() => setLoading(false));
-  }, []);
+    let mounted = true;
+
+    async function loadProjects() {
+      try {
+        const data = await fetchProjects();
+        if (mounted) setProjects(data);
+      } catch (e) {
+        const isExpiredToken = typeof e?.message === 'string'
+          && e.message.toLowerCase().includes('token scaduto');
+
+        if (isExpiredToken) {
+          const refreshed = await refresh();
+          if (refreshed) {
+            const retried = await fetchProjects();
+            if (mounted) setProjects(retried);
+            return;
+          }
+          logout();
+          navigate('/login', { replace: true });
+          return;
+        }
+
+        if (mounted) setError(e.message);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    }
+
+    loadProjects();
+    return () => {
+      mounted = false;
+    };
+  }, [logout, navigate, refresh]);
 
   const handleProjectClick = (project) => {
     if (project.slug === 'dashboard') return;
